@@ -1,0 +1,9 @@
+.Rproj.user
+
+# do not track
+
+# raw data folder
+_raw_data/*
+
+# report output
+*.html

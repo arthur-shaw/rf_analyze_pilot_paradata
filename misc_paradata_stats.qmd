@@ -1,0 +1,122 @@
+---
+format: html
+embed-resources: true
+toc: true
+toc-depth: 3
+execute: 
+  eval: true
+  echo: false
+  error: false
+  warning: false
+---
+
+```{r}
+#| label: load project
+proj_dir <- here::here()
+```
+
+```{r}
+#| label: run scripts
+
+# prepare data
+source(fs::path(proj_dir, "R", "01_prepare_data.R"))
+
+# run ad hoc analyses
+source(fs::path(proj_dir, "rf_analyze_pilot_paradata.R"))
+```
+
+```{r}
+rf_theme <- reactable::reactableTheme(
+  headerStyle = list(
+    background = "#0b2d68",
+    color = "white"
+  ),
+  stripedColor = "#e3f7ff",
+)
+```
+
+## Module duration
+
+### Overall
+
+```{r}
+#| label: section duration overall
+
+reactable::reactable(
+  data = duration_by_module,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    section = reactable::colDef(
+      width = 250
+    ),
+    n_obs = reactable::colDef(
+      format = reactable::colFormat(separators = TRUE)
+    )
+  ),
+  fullWidth = FALSE,
+  searchable = TRUE,
+  striped = TRUE,
+  theme = rf_theme
+)
+
+```
+
+### Per person
+
+```{r}
+#| label: section duration by person
+
+reactable::reactable(
+  data = duration_by_person_module,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    section = reactable::colDef(
+      width = 250
+    ),
+    n_obs = reactable::colDef(
+      format = reactable::colFormat(separators = TRUE)
+    )
+  ),
+  fullWidth = FALSE,
+  striped = TRUE,
+  theme = rf_theme
+)
+```
+
+### Per item
+
+```{r}
+#| label: section duration by item
+
+reactable::reactable(
+  data = duration_by_item,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    section = reactable::colDef(
+      width = 250
+    ),
+    n_obs = reactable::colDef(
+      format = reactable::colFormat(separators = TRUE)
+    )
+  ),
+  fullWidth = FALSE,
+  striped = TRUE,
+  theme = rf_theme
+)
+
+```

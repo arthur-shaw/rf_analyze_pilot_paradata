@@ -1,0 +1,5 @@
+# do not track any temporary/intermediate data
+*.rds
+*.tsv
+*.csv
+*.dta
