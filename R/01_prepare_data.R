@@ -65,9 +65,6 @@ rm(paradata_raw)
 paradata_w_section <- paradata_processed |>
 	tidytable::left_join(variables_by_section, by = "variable")
 
-# clean up environment
-rm(paradata_processed)
-
 readr::write_tsv(
   x = paradata_w_section,
   file = here::here("data", "03_created", "paradata_w_section.tsv")

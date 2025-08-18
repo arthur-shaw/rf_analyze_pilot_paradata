@@ -203,6 +203,33 @@ duration_by_item <- paradata_w_section |>
   ) |>
   tidytable::ungroup()
 
+# ------------------------------------------------------------------------------
+# question-level
+# ------------------------------------------------------------------------------
+
+duration_by_question <- paradata_processed |>
+  # remove entries that are not variables
+  tidytable::filter(!is.na(variable)) |>
+	tidytable::filter(event != "Completed") |>
+  # compute statistics by question
+  tidytable::group_by(variable) |>
+  tidytable::summarise(
+    med = median(x = elapsed_min, na.rm = TRUE),
+    sd = sd(x = elapsed_min, na.rm = TRUE),
+    min = min(elapsed_min, na.rm = TRUE),
+    max = max(elapsed_min, na.rm = TRUE),
+    n_obs = tidytable::n()
+  ) |>
+  tidytable::ungroup() |>
+  # join section attribute to facilitate filtering
+  dplyr::left_join(
+    variables_by_section,
+    by = "variable"
+  ) |>
+	dplyr::relocate(section, .before = variable) |>
+	# sort in descending order of median duration
+  dplyr::arrange(dplyr::desc(med))
+
 # ==============================================================================
 # module pauses or long durations
 # ==============================================================================
