@@ -120,3 +120,41 @@ reactable::reactable(
 )
 
 ```
+
+### Question duration
+
+```{r}
+#| label: question duration
+
+duration_by_question_filterable <- crosstalk::SharedData$new(duration_by_question)
+
+crosstalk::bscols(
+  widths = c(3, 9),
+  list(
+    crosstalk::filter_slider("n_obs", "Obs per question", duration_by_question_filterable, ~ n_obs, step = 1),
+    crosstalk::filter_select("section", "Section", duration_by_question_filterable, ~ section, multiple = TRUE)
+  ),
+  reactable::reactable(
+    data = duration_by_question_filterable,
+    defaultColDef = reactable::colDef(
+      maxWidth = 100,
+      format = reactable::colFormat(
+        digits = 2
+      )
+    ),
+    columns = list(
+      section = reactable::colDef(
+        show = FALSE
+      ),
+      n_obs = reactable::colDef(
+        format = reactable::colFormat(separators = TRUE)
+      )
+    ),
+    fullWidth = FALSE,
+    striped = TRUE,
+    theme = rf_theme
+  )
+)
+
+```
+
