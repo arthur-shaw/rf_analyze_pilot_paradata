@@ -158,3 +158,11 @@ crosstalk::bscols(
 
 ```
 
+### Focus on longer modules
+
+#### Education
+
+#### Labor
+
+#### Shocks
+
