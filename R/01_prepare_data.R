@@ -42,7 +42,12 @@ paradata_raw <- tidytable::map_dfr(
 # parse the file into a form needed for analysis
 paradata_processed <- susopara::parse_paradata(dt = paradata_raw) |>
 	# remove "passive" events of variables being computed
-  tidytable::filter(!variable %in% names_computed_variables)
+  tidytable::filter(!variable %in% names_computed_variables) |>
+	# remove passive events currently not removed by `susopara`
+  tidytable::filter(
+    !event %in%
+    c("InterviewCreated", "InterviewModeChanged", "InterviewerAssigned")
+  )
 
 # compute time between events
 paradata_processed <- susopara::calc_time_btw_active_events(
