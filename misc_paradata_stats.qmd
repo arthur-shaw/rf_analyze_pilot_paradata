@@ -246,3 +246,41 @@ reactable::reactable(
 ```
 
 ### Pauses
+
+Because pauses are relatively infrequent events, the table below computes the number of answer changes as a simple tally over all pilot observations.
+
+```{r}
+#| label: pauses
+
+reactable::reactable(
+  data = pauses_by_section_count,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    section = reactable::colDef(
+      width = 250
+    ),
+    n_obs = reactable::colDef(
+      header = "N. events",
+      format = reactable::colFormat(separators = TRUE)
+    ),
+    n_pauses = reactable::colDef(
+      header = "N. pauses",
+      format = reactable::colFormat(separators = TRUE)
+    ),
+    pct_pauses = reactable::colDef(
+      header = "% events pauses",
+      format = reactable::colFormat(percent = TRUE, digits = 2)
+    )
+  ),
+  fullWidth = FALSE,
+  striped = TRUE,
+  theme = rf_theme
+)
+
+```
+

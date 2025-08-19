@@ -364,6 +364,65 @@ duration_for_shocks <- paradata_w_section |>
 # pauses
 # ==============================================================================
 
+paradata_w_pauses_and_sections <- paradata_processed |>
+	tidytable::left_join(
+    variables_by_section,
+    by = "variable"
+  )
+
+# number of pauses
+# pauses_by_section_med <- paradata_w_pauses_and_sections |>
+# 	tidytable::fill(section, .direction = "updown") |>
+#   # compute number of pauses per interview-section
+#   tidytable::mutate(num_pauses = event == "Paused") |>
+#   tidytable::group_by(interview__id, section) |>
+#   tidytable::summarise(
+#     num_pauses = sum(num_pauses, na.rm = TRUE)
+#   ) |>
+#   tidytable::ungroup() |>
+# 	# compute stats by section
+#   tidytable::group_by(section) |>
+#   tidytable::summarise(
+#     med = median(x = num_pauses, na.rm = TRUE),
+#     sd = sd(x = num_pauses, na.rm = TRUE),
+#     min = min(num_pauses, na.rm = TRUE),
+#     max = max(num_pauses, na.rm = TRUE),
+#     n_obs = tidytable::n()
+#   ) |>
+#   tidytable::ungroup() |>
+# 	dplyr::arrange(dplyr::desc(med), dplyr::desc(max))
+
+pauses_by_section_count <- paradata_w_pauses_and_sections |>
+	tidytable::fill(section, .direction = "updown") |>
+  # compute number of pauses per interview-section
+  tidytable::mutate(n_pauses = event == "Paused") |>
+  tidytable::group_by(section) |>
+  tidytable::summarise(
+    n_pauses = sum(n_pauses, na.rm = TRUE),
+    n_obs = tidytable::n()
+  ) |>
+  tidytable::ungroup() |>
+  dplyr::mutate(pct_pauses = n_pauses/n_obs) |>
+	dplyr::arrange(dplyr::desc(n_pauses)) |>
+	dplyr::select(section, n_obs, n_pauses, pct_pauses)
+
+# # "nearby" questions
+# pause_leads <- paradata_w_pauses_and_sections |>
+# 	tidytable::fill(variable, .direction = "down") |>
+#   tidytable::mutate(num_pauses = event == "Paused") |>
+#   tidytable::filter(num_pauses == TRUE) |>
+# 	# compute stats by paused variable
+#   tidytable::group_by(variable) |>
+#   tidytable::summarise(
+#     med = median(x = num_pauses, na.rm = TRUE),
+#     sd = sd(x = num_pauses, na.rm = TRUE),
+#     min = min(num_pauses, na.rm = TRUE),
+#     max = max(num_pauses, na.rm = TRUE),
+#     n_obs = tidytable::n()
+#   ) |>
+#   tidytable::ungroup() |>
+# 	dplyr::arrange(dplyr::desc(med))
+
 # ==============================================================================
 # answer changes
 # ==============================================================================
