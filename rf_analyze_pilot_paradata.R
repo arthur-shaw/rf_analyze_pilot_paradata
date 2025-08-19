@@ -102,9 +102,6 @@ saveRDS(
   file = here::here("data", "03_created", "duration_by_module.rds")
 )
 
-duration_by_module |>
-	reactable::reactable()
-
 # ------------------------------------------------------------------------------
 # person-level
 # ------------------------------------------------------------------------------
@@ -231,14 +228,142 @@ duration_by_question <- paradata_w_durations |>
   dplyr::arrange(dplyr::desc(med))
 
 # ==============================================================================
-# module pauses or long durations
+# focus on modules with longer lengths
 # ==============================================================================
 
+# ------------------------------------------------------------------------------
+# education
+# ------------------------------------------------------------------------------
+
+duration_for_educ <- paradata_w_section |>
+  # filter to education
+  tidytable::filter(section == "SECTION 2: EDUCATION") |>
+  # split section into two parts
+  tidytable::mutate(
+    sub_section = tidytable::case_when(
+      grepl(x = variable, pattern = "^s2q([0-9]|s2q1[0-7])(_oth)?") ~ "Non-expendtiure",
+      .default = "Expenditure"
+    )
+  ) |>
+  # compute sum by interview
+  tidytable::group_by(interview__id, sub_section) |>
+  tidytable::summarise(
+    elapsed_min = sum(elapsed_min, na.rm = TRUE)
+  ) |>
+	# compute stats by sub-section
+  tidytable::group_by(sub_section) |>
+  tidytable::summarise(
+    med = median(x = elapsed_min, na.rm = TRUE),
+    sd = sd(x = elapsed_min, na.rm = TRUE),
+    min = min(elapsed_min, na.rm = TRUE),
+    max = max(elapsed_min, na.rm = TRUE),
+    n_obs = tidytable::n()
+  ) |>
+  tidytable::ungroup() |>
+	dplyr::mutate(
+    sub_section_order = dplyr::case_when(
+      sub_section == "Non-expendtiure" ~ 1,
+      sub_section == "Exenditure" ~ 2
+    )
+  ) |>
+	dplyr::arrange(sub_section_order) |>
+	dplyr::select(-sub_section_order)
+
+# ------------------------------------------------------------------------------
+# labor
+# ------------------------------------------------------------------------------
+
+duration_for_labor <- paradata_w_section |>
+  # filter to labor
+  tidytable::filter(section == "SECTION 4: LABOR") |>
+  # split section into two parts
+  tidytable::mutate(
+    sub_section = tidytable::case_when(
+      # through q29
+      # main job
+      # everything else
+      grepl(x = variable, pattern = "^s4q([1-9]|1[0-9]|2[0-9])(_oth)?$") ~
+        "Questions 1-29",
+      grepl(x = variable, pattern = "^s4q(3[0-9]|4[0-9]|50a)(_oth)?") ~
+        "Main job",
+      .default = "Everyting else"
+    )
+  ) |>
+  # compute sum by interview
+  tidytable::group_by(interview__id, sub_section) |>
+  tidytable::summarise(
+    elapsed_min = sum(elapsed_min, na.rm = TRUE)
+  ) |>
+	# compute stats by sub-section
+  tidytable::group_by(sub_section) |>
+  tidytable::summarise(
+    med = median(x = elapsed_min, na.rm = TRUE),
+    sd = sd(x = elapsed_min, na.rm = TRUE),
+    min = min(elapsed_min, na.rm = TRUE),
+    max = max(elapsed_min, na.rm = TRUE),
+    n_obs = tidytable::n()
+  ) |>
+  tidytable::ungroup() |>
+	dplyr::mutate(
+    sub_section_order = dplyr::case_when(
+      sub_section == "Questions 1-29" ~ 1, 
+      sub_section == "Main job" ~ 2,
+      sub_section == "Everyting else" ~ 3,
+      .default = NA_integer_
+    )
+  ) |>
+	dplyr::arrange(sub_section_order) |>
+	dplyr::select(-sub_section_order)
+
+
+# ------------------------------------------------------------------------------
+# shocks
+# ------------------------------------------------------------------------------
+
+duration_for_shocks <- paradata_w_section |>
+  # filter to labor
+  tidytable::filter(
+    section == "SECTION 16A: SHOCKS & COPING I" |
+    section == "SECTION 16B: SHOCKS & COPING II"
+  ) |>
+  # split section into two parts
+  tidytable::mutate(
+    sub_section = tidytable::case_when(
+      # through q2
+      variable %in% c("s16a_StartTime", "s16aq0", "s16aq1", "s16aq2") ~
+        "Questions from start through q2",
+      .default = "Everyting else"
+    )
+  ) |>
+  # compute sum by interview
+  tidytable::group_by(interview__id, sub_section) |>
+  tidytable::summarise(
+    elapsed_min = sum(elapsed_min, na.rm = TRUE)
+  ) |>
+	# compute stats by sub-section
+  tidytable::group_by(sub_section) |>
+  tidytable::summarise(
+    med = median(x = elapsed_min, na.rm = TRUE),
+    sd = sd(x = elapsed_min, na.rm = TRUE),
+    min = min(elapsed_min, na.rm = TRUE),
+    max = max(elapsed_min, na.rm = TRUE),
+    n_obs = tidytable::n()
+  ) |>
+  tidytable::ungroup() |>
+	dplyr::mutate(
+    sub_section_order = dplyr::case_when(
+      sub_section == "Questions from start through q2" ~ 1, 
+      sub_section == "Everyting else" ~ 2,
+      .default = NA_integer_
+    )
+  ) |>
+	dplyr::arrange(sub_section_order) |>
+	dplyr::select(-sub_section_order)
 
 # ==============================================================================
-# question length
+# pauses
 # ==============================================================================
 
 # ==============================================================================
-# question answer changes
+# answer changes
 # ==============================================================================

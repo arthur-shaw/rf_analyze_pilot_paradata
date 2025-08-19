@@ -162,7 +162,85 @@ crosstalk::bscols(
 
 #### Education
 
+```{r}
+#| label: education
+ 
+reactable::reactable(
+  data = duration_for_educ,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    section = reactable::colDef(
+      width = 250
+    ),
+    n_obs = reactable::colDef(
+      format = reactable::colFormat(separators = TRUE)
+    )
+  ),
+  fullWidth = FALSE,
+  striped = TRUE,
+  theme = rf_theme
+)
+
+```
+
 #### Labor
+
+```{r}
+#| label: labor
+
+reactable::reactable(
+  data = duration_for_labor,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    section = reactable::colDef(
+      width = 250
+    ),
+    n_obs = reactable::colDef(
+      format = reactable::colFormat(separators = TRUE)
+    )
+  ),
+  fullWidth = FALSE,
+  striped = TRUE,
+  theme = rf_theme
+)
+
+
+```
 
 #### Shocks
 
+```{r}
+#| label: shocks
+
+reactable::reactable(
+  data = duration_for_shocks,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    section = reactable::colDef(
+      width = 250
+    ),
+    n_obs = reactable::colDef(
+      format = reactable::colFormat(separators = TRUE)
+    )
+  ),
+  fullWidth = FALSE,
+  striped = TRUE,
+  theme = rf_theme
+)
+
+```
