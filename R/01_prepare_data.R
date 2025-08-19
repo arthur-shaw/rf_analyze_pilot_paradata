@@ -63,7 +63,8 @@ rm(paradata_raw)
 # ------------------------------------------------------------------------------
 
 paradata_w_section <- paradata_w_durations |>
-	tidytable::left_join(variables_by_section, by = "variable")
+	tidytable::left_join(variables_by_section, by = "variable") |>
+	tidytable::filter(!is.na(section))
 
 readr::write_tsv(
   x = paradata_w_section,
