@@ -358,7 +358,6 @@ Because answer changes are a relatively rare event, this table tries to identify
 reactable::reactable(
   data = answer_changes_by_question,
   defaultColDef = reactable::colDef(
-    maxWidth = 100,
     format = reactable::colFormat(
       digits = 2
     )
@@ -380,6 +379,7 @@ reactable::reactable(
       format = reactable::colFormat(percent = TRUE, digits = 2)
     )
   ),
+  fullWidth = FALSE,
   striped = TRUE,
   theme = rf_theme
 )
