@@ -207,7 +207,7 @@ duration_by_item <- paradata_w_section |>
 # question-level
 # ------------------------------------------------------------------------------
 
-duration_by_question <- paradata_processed |>
+duration_by_question <- paradata_w_durations |>
   # remove entries that are not variables
   tidytable::filter(!is.na(variable)) |>
 	tidytable::filter(event != "Completed") |>
