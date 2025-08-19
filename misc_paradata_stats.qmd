@@ -39,6 +39,10 @@ rf_theme <- reactable::reactableTheme(
 
 ### Overall
 
+To give a broad sense of how long each module takes, duration is first summed at the interview level, and then statistics are computed across all interview-modules. For modules that contain rosters, the duration here should be understood as the total administration duration--for example, how long it takes, first, to enumerate all food items consumed in the past 7 days and, then, to ask detailed questions about the food items consumed.
+
+The column `n_obs` is the number of interviews for which the module was administered, even if for only one question.
+
 ```{r}
 #| label: section duration overall
 
@@ -68,6 +72,10 @@ reactable::reactable(
 
 ### Per person
 
+Since several modules are administered at member level, this table attempts reports a "unit" duration estimate--that is, how long the module takes to complete for one person. To do so for a given module, one first computes the total duration per row and then calculates statistics across all such rows.
+
+The column `n_obs` is the total number of people across all interviews.
+
 ```{r}
 #| label: section duration by person
 
@@ -95,6 +103,8 @@ reactable::reactable(
 
 ### Per item
 
+Since several modules are administered at the item level--whether that item be an asset, a food item, or a household enterprise--this table reports the duration per item. This "unit" duration includes any household-level questions that may come at the beginning of the module (e.g., which food items are consumed).
+
 ```{r}
 #| label: section duration by item
 
@@ -121,7 +131,10 @@ reactable::reactable(
 
 ```
 
-### Question duration
+
+Since not every question is answered in every interview, this table computes statistics for every question-level event across all pilot interviews.
+
+Hence, `n_obs` is the number of total question events in the paradata.
 
 ```{r}
 #| label: question duration
@@ -160,7 +173,16 @@ crosstalk::bscols(
 
 ### Focus on longer modules
 
+This section focuses on three modules that appear among the longest duration and/or were flagged by the firm as being long or frustrating for respondents.
+
+To understand which parts of each module contribute to its overall length, each module is broken down into logical sub-sections for sub-section-level reporting of interview duration.
+
 #### Education
+
+Education is broken down into two sub-sections:
+
+1. **Non-expenditure.** These questions ask about reading/writing ability and educational attainment.
+2. **Expenditure.** These are non-negotiable questions about educational expenditures.
 
 ```{r}
 #| label: education
@@ -190,6 +212,12 @@ reactable::reactable(
 
 #### Labor
 
+The labor module is broken down into three sub-modules:
+
+1. **Questions 1 through 29.** This covers employment, farm work, temporary absence, and job search.
+2. **Main job.** This captures information on the main job, the ISIC and ISCO codes, and assorted details on the employer and work benefits.
+3. **Everything else.** This covers the second job (if any), additional work, usage of gig apps, and food or cash for work. 
+
 ```{r}
 #| label: labor
 
@@ -218,6 +246,11 @@ reactable::reactable(
 ```
 
 #### Shocks
+
+The shocks module is broken down into:
+
+- **Questions 1 and 2.** The questions that tradtionally constitute a shocks module.
+- **Everything else.** The more detailed questions about shocks included in this survey, some of which are potentially duplicative of questions asked in other modules (e.g., livestock, agriculture, etc).
 
 ```{r}
 #| label: shocks
