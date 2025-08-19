@@ -426,3 +426,37 @@ pauses_by_section_count <- paradata_w_pauses_and_sections |>
 # ==============================================================================
 # answer changes
 # ==============================================================================
+
+answer_changes_by_section <- paradata_w_section |>
+  tidytable::mutate(n_answer_changes = event == "AnswerRemoved") |>
+  tidytable::group_by(interview__id, section) |>
+	tidytable::summarise(n_answer_changes = sum(n_answer_changes, na.rm = TRUE)) |>
+	tidytable::ungroup() |>
+	# compute stats by section
+  tidytable::group_by(section) |>
+  tidytable::summarise(
+    med = median(x = n_answer_changes, na.rm = TRUE),
+    sd = sd(x = n_answer_changes, na.rm = TRUE),
+    min = min(n_answer_changes, na.rm = TRUE),
+    max = max(n_answer_changes, na.rm = TRUE),
+    n_obs = tidytable::n()
+  ) |>
+  tidytable::ungroup() |>
+	dplyr::arrange(dplyr::desc(med), dplyr::desc(max))
+
+answer_changes_by_question <- paradata_w_section |>
+  # remove entries that are not variables
+  tidytable::filter(!is.na(variable)) |>
+	tidytable::filter(event != "Completed") |>
+  # create answer change flag
+  tidytable::mutate(n_answer_changes = event == "AnswerRemoved") |>
+	# compute stats by question
+  tidytable::group_by(variable) |>
+  tidytable::summarise(
+    n_answer_changes = sum(n_answer_changes, na.rm = TRUE),
+    n_obs = tidytable::n()
+  ) |>
+  tidytable::ungroup() |>
+  dplyr::mutate(pct_answer_changed = n_answer_changes / n_obs) |>
+  dplyr::select(variable, n_obs, n_answer_changes, pct_answer_changed) |>
+	dplyr::arrange(dplyr::desc(n_answer_changes))

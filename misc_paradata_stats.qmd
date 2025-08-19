@@ -284,3 +284,70 @@ reactable::reactable(
 
 ```
 
+### Answer changes
+
+#### By section
+
+```{r}
+#| label: answer changes by section
+
+reactable::reactable(
+  data = answer_changes_by_section,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    section = reactable::colDef(
+      width = 250
+    ),
+    n_obs = reactable::colDef(
+      format = reactable::colFormat(separators = TRUE)
+    )
+  ),
+  fullWidth = FALSE,
+  striped = TRUE,
+  theme = rf_theme
+)
+
+```
+
+#### By question
+
+Because answer changes are a relatively rare event, this table tries to identify questions with a relatively large number of answer changes by computing a simply tally of answer changes across all pilot observations.
+
+```{r}
+#| label: answer changes by question
+
+reactable::reactable(
+  data = answer_changes_by_question,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    variable = reactable::colDef(
+      width = 100
+    ),
+    n_obs = reactable::colDef(
+      header = "N. events",
+      format = reactable::colFormat(separators = TRUE)
+    ),
+    n_answer_changes = reactable::colDef(
+      header = "N. answer changes",
+      format = reactable::colFormat(separators = TRUE)
+    ),
+    pct_answer_changed = reactable::colDef(
+      header = "% events are answer changes",
+      format = reactable::colFormat(percent = TRUE, digits = 2)
+    )
+  ),
+  striped = TRUE,
+  theme = rf_theme
+)
+
+```
