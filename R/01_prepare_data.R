@@ -50,7 +50,7 @@ paradata_processed <- susopara::parse_paradata(dt = paradata_raw) |>
   )
 
 # compute time between events
-paradata_processed <- susopara::calc_time_btw_active_events(
+paradata_w_durations <- susopara::calc_time_btw_active_events(
   dt = paradata_processed
 )
 
@@ -62,7 +62,7 @@ rm(paradata_raw)
 # Amplified paradata
 # ------------------------------------------------------------------------------
 
-paradata_w_section <- paradata_processed |>
+paradata_w_section <- paradata_w_durations |>
 	tidytable::left_join(variables_by_section, by = "variable")
 
 readr::write_tsv(
