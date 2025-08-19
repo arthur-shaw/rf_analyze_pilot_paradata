@@ -131,6 +131,7 @@ reactable::reactable(
 
 ```
 
+## Question duration
 
 Since not every question is answered in every interview, this table computes statistics for every question-level event across all pilot interviews.
 
@@ -278,7 +279,7 @@ reactable::reactable(
 
 ```
 
-### Pauses
+## Pauses
 
 Because pauses are relatively infrequent events, the table below computes the number of answer changes as a simple tally over all pilot observations.
 
@@ -317,9 +318,9 @@ reactable::reactable(
 
 ```
 
-### Answer changes
+## Answer changes
 
-#### By section
+### By section
 
 ```{r}
 #| label: answer changes by section
@@ -347,7 +348,7 @@ reactable::reactable(
 
 ```
 
-#### By question
+### By question
 
 Because answer changes are a relatively rare event, this table tries to identify questions with a relatively large number of answer changes by computing a simply tally of answer changes across all pilot observations.
 
