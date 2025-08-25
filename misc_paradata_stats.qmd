@@ -35,7 +35,7 @@ rf_theme <- reactable::reactableTheme(
 )
 ```
 
-## Questionanire duration
+## Questionnaire duration
 
 The pilot interview is composed of three standardized questionnaires:
 
