@@ -43,6 +43,86 @@ compute_stats <- function(
 # overall
 # ------------------------------------------------------------------------------
 
+duration_by_interview <- paradata_w_section |>
+  # compute total by interview-questionnaire
+  tidytable::group_by(interview__id) |>
+  tidytable::summarise(
+    elapsed_min = sum(elapsed_min, na.rm = TRUE)
+  ) |>
+  tidytable::ungroup() |>
+  # compute statistics by questionnaire
+  tidytable::summarise(
+    med = median(x = elapsed_min, na.rm = TRUE),
+    mean = mean(x = elapsed_min, na.rm = TRUE),
+    sd = sd(x = elapsed_min, na.rm = TRUE),
+    min = min(elapsed_min, na.rm = TRUE),
+    max = max(elapsed_min, na.rm = TRUE),
+    n_obs = tidytable::n()
+  ) |>
+	dplyr::mutate(
+    qnr = "Total interview duration",
+    .before = 1
+  )
+
+duration_by_qnr <- paradata_w_section |>
+  # remove empty section
+  tidytable::filter(!is.na(section)) |>
+  tidytable::mutate(
+    qnr = tidytable::case_when(
+      # agriculture
+      grepl(x = section, pattern = "(?<=SECTION )AG[0-9]", perl = TRUE) ~
+        "Agriculture",
+      # supplementary group 1: Group 1 (EDU, Digital, Mental, labor, casual, remittance, chronic))
+      section %in% c(
+        "[SP2] EDUCATION DIGITIAL SKILLS",
+        "[SP4] MENTAL HEALTH",
+        "[SP6] CASUAL LABOUR",
+        "[S12] REMITTANCES",
+        "[S13] CHRONIC DISEASES"
+      ) ~ "Supplementary group 1",
+      # supplementary group 3: Group 2 (child care, migration, aspiration)
+      section %in% c(
+        "[SP3] CHILDCARE",
+        "[SP10] MIGRATION - FORMER HOUSEHOLD MEMBERS",
+        "[SP11] MIGRATION ASPIRATIONS"
+      ) ~ "Supplementary group 2",
+      # supplementary group 3: Group 3 (ECD, job history, migration 12 months)
+      section %in% c(
+        "[SP1] EARLY CHILDHOOD DEVELOPMENT",
+        "[SP5] JOB HISTORY",
+        "[SP9] MIGRATION IN THE LAST 12 MONTHS"
+      ) ~ "Supplementary group 3",
+      # household
+      .default = "Household"
+    ),
+    .before = 1
+  ) |>
+  # compute total by interview-questionnaire
+  tidytable::group_by(interview__id, qnr) |>
+  tidytable::summarise(
+    elapsed_min = sum(elapsed_min, na.rm = TRUE)
+  ) |>
+  tidytable::ungroup() |>
+  # compute statistics by questionnaire
+  compute_stats(by_var = qnr) |>
+  # order sections for presentation purposes
+  dplyr::mutate(
+    qnr_num = dplyr::case_when(
+      qnr == "Household" ~ 1,
+      qnr == "Agriculture" ~ 2,
+      qnr == "Supplemental group 1" ~ 3,
+      qnr == "Supplemental group 2" ~ 4,
+      qnr == "Supplemental group 3" ~ 3,
+      .default = NA
+    )
+  ) |>
+	dplyr::arrange(qnr_num) |>
+	dplyr::select(-qnr_num)
+
+duration_by_qnr_w_total <- dplyr::bind_rows(
+  duration_by_interview, duration_by_qnr
+)
+
 duration_by_module <- paradata_w_section |>
   # remove empty section
   tidytable::filter(!is.na(section)) |>

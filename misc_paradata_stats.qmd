@@ -35,6 +35,64 @@ rf_theme <- reactable::reactableTheme(
 )
 ```
 
+## Questionanire duration
+
+The pilot interview is composed of three standardized questionnaires:
+
+- Household
+- Agriculture
+- Supplemental
+
+For the supplemental questionnaire, the pilot sample randomly allocated households to be administered one of three groups of supplemental modules.
+
+Group 1 consists of:
+
+- [SP2] EDUCATION DIGITIAL SKILLS
+- [SP4] MENTAL HEALTH
+- [SP6] CASUAL LABOUR
+- [S12] REMITTANCES
+- [S13] CHRONIC DISEASES
+
+Group 2 consists of:
+
+- [SP3] CHILDCARE
+- [SP10] MIGRATION - FORMER HOUSEHOLD MEMBERS
+- [SP11] MIGRATION ASPIRATIONS
+
+Group 2 consists of:
+
+- [SP1] EARLY CHILDHOOD DEVELOPMENT
+- [SP5] JOB HISTORY
+- [SP9] MIGRATION IN THE LAST 12 MONTHS
+
+For the overall total duration, this is simply the sum of all duration for all modules administered. By construction, the modules differ for the supplementary ones.
+
+```{r}
+#| label: questionnaire duration
+reactable::reactable(
+  data = duration_by_qnr_w_total,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    qnr = reactable::colDef(
+      header = "Questionnaire",
+      width = 250
+    ),
+    n_obs = reactable::colDef(
+      format = reactable::colFormat(separators = TRUE)
+    )
+  ),
+  fullWidth = FALSE,
+  searchable = TRUE,
+  striped = TRUE,
+  theme = rf_theme
+)
+```
+
 ## Module duration
 
 ### Overall
