@@ -126,6 +126,130 @@ duration_by_qnr_w_total <- dplyr::bind_rows(
 duration_by_module <- paradata_w_section |>
   # remove empty section
   tidytable::filter(!is.na(section)) |>
+  # collapse modules that technicall span multiple modules
+  # for example, 9A - 9D are all non-food expenditure
+  tidytable::mutate(
+    section = tidytable::case_when(
+      # health
+      section %in% c(
+        "SECTION 3A: HEALTH",
+        "SECTION 3B: CHILD ANTHROPOMETRY",
+        "SECTION 3C: FUNCTIONING"
+      ) ~ "SECTION 3: HEALTH, ANTHRO, FUNCTIONING",
+      # non-food expenditure
+      section %in% c(
+        "Section 9A: Non-Food Expenditures, 7-Day Recall Period",
+        "Section 9B: Non-Food Expenditures, 30-Day Recall Period",
+        "Section 9C: NON-FOOD EXPENDITURES-CLOTHING AND FOOT WEAR - 3 MONTH RECALL PERIOD",
+        "Section 9D: Non-Food Expenditures, 12-Month Recall Period"
+      ) ~ "Section 9A - 9D: Non-Food Expenditures",
+      # food
+      section %in% c(
+        "SECTION 10A: Food Consumption Score (FCS)",
+        "SECTION 10B: FOOD (FIES)"
+      ) ~ "SECTION 10: FSC, FIES",
+      # household business
+      section %in% c(
+        "SECTION 15A: HOUSEHOLD BUSINESS I",
+        "SECTION 15B: HOUSEHOLD BUSINESS II"
+      ) ~ "SECTION 15: HOUSEHOLD BUSINESS",
+      # shocks
+      section %in% c(
+        "SECTION 16A: SHOCKS & COPING I",
+        "SECTION 16B: SHOCKS & COPING II"
+      ) ~ "SECTION 16: SHOCKS & COPING",
+      # crop
+      section %in% c(
+        "SECTION AG1. CROP FARMING PRACTICES",
+        "SECTION AG2.A CROP PRODUCTION",
+        "SECTION AG2.B CROP LABOR - MAIN SEASON",
+        "SECTION AG3.A CROP PRODUCTION - PERMANENT",
+        "SECTION AG3.B CROP LABOR - PERMANENT",
+        "SECTION AG5. CROP INPUTS"
+      ) ~ "SECTION AG2 - AG5: CROPS",
+      # livestock
+      section %in% c(
+        "SECTION AG6A. LIVESTOCK OWNERSHIP",
+        "SECTION AG6B. LIVESTOCK COSTS",
+        "SECTION AG6C LIVESTOCK PRODUCTS",
+        "SECTION - AG6D LIVESTOCK LABOR"
+      ) ~ "SECTION AG6A - AG6D: LIVESTOCK",
+      # fisheries
+      section %in% c(
+        "SECTION AG7A: FISHING & AQUACULTURE PRODUCTION",
+        "SECTION AG7B: FISHERIES & AQUACULTURE LABOR"
+      ) ~ "SECTION AG7 : FISHERIES",
+      .default = section
+    )
+  ) |>
+  # compute total by interview-section
+  tidytable::group_by(interview__id, section) |>
+  tidytable::summarise(
+    elapsed_min = sum(elapsed_min, na.rm = TRUE)
+  ) |>
+  tidytable::ungroup() |>
+  # compute statistics by questionnaire
+  compute_stats(by_var = section) |>
+  # order sections for presentation purposes
+  dplyr::mutate(
+    section_num = dplyr::case_when(
+      section == "Cover" ~ 1,
+      section == "START" ~ 2,
+      section == "SECTION 1: HOUSEHOLD ROSTER" ~ 3,
+      section == "SECTION 2: EDUCATION" ~ 4,
+      # collapsed health
+      section == "SECTION 3: HEALTH, ANTHRO, FUNCTIONING" ~ 5,
+      section == "SECTION 4: LABOR" ~ 8,
+      section == "SECTION 5: DIGITAL TECH" ~ 9,
+      section == "SECTION 6: FINANCIAL SERVICES" ~ 10,
+      section == "SECTION 7: FOOD AWAY FROM HOME" ~ 11,
+      section == "SECTION 8: FOOD CONSUMPTION" ~ 12,
+      # collapsed non-food expenditure
+      section == "Section 9A - 9D: Non-Food Expenditures" ~ 13,
+      # collapsed food security
+      section == "SECTION 10: FSC, FIES" ~ 17,
+      section == "SECTION 11: HOUSING" ~ 19,
+      section == "SECTION 12: ENERGY" ~ 20,
+      section == "SECTION 13: WASH" ~ 21,
+      section == "SECTION 14: DURABLE GOODS" ~ 22,
+      # collapsed household business
+      section == "SECTION 15: HOUSEHOLD BUSINESS" ~ 23,
+      # collapsed shocks
+      section == "SECTION 16: SHOCKS & COPING" ~ 25,
+      section == "SECTION 17: ACCESS TO WEATHER INFORMATION" ~ 27,
+      section == "SECTION 18: OTHER HOUSEHOLD INCOME" ~ 28,
+      section == "SECTION 19: SOCIAL ASSISTANCE AND SOCIAL PROTECTION" ~ 29,
+      section == "SECTION 20: AGRICULTURE FILTERS" ~ 30,
+      # collapsed crops
+      section == "SECTION AG2 - AG5: CROPS" ~ 31,
+      # collapsed livestock
+      section == "SECTION AG6A - AG6D: LIVESTOCK" ~ 37,
+      # collapsed fisheries
+      section == "SECTION AG7 : FISHERIES" ~ 41,
+      section == "SECTION AG8: AGRICULTURE EQUIPMENT & ASSETS" ~ 43,
+      section == "SECTION AG9. AGRO-PROCESSING & FORESTRY" ~ 44,
+      section == "SECTION AG10. OTHER PRODUCTION COSTS" ~ 45,
+      section == "[SP1] EARLY CHILDHOOD DEVELOPMENT" ~ 46,
+      section == "[SP2] EDUCATION DIGITIAL SKILLS" ~ 47,
+      section == "[SP3] CHILDCARE" ~ 48,
+      section == "[SP4] MENTAL HEALTH" ~ 49,
+      section == "[SP5] JOB HISTORY" ~ 50,
+      section == "[SP6] CASUAL LABOUR" ~ 51,
+      section == "[SP9] MIGRATION IN THE LAST 12 MONTHS" ~ 52,
+      section == "[SP10] MIGRATION - FORMER HOUSEHOLD MEMBERS" ~ 53,
+      section == "[SP11] MIGRATION ASPIRATIONS" ~ 54,
+      section == "[S12] REMITTANCES" ~ 55,
+      section == "[S13] CHRONIC DISEASES" ~ 56,
+      section == "SECTION 22: CONTACT" ~ 57,
+      .default = 99
+    )
+  ) |>
+	dplyr::arrange(section_num) |>
+	dplyr::select(-section_num)
+
+duration_by_module_detailed <- paradata_w_section |>
+  # remove empty section
+  tidytable::filter(!is.na(section)) |>
   # compute total by interview
   tidytable::group_by(interview__id, section) |>
   tidytable::summarise(

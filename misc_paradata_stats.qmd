@@ -101,11 +101,46 @@ To give a broad sense of how long each module takes, duration is first summed at
 
 The column `n_obs` is the number of interviews for which the module was administered, even if for only one question.
 
+#### Summarized
+
+For ease of reading, sections that are split into multile parts (e.g, A, B, etc.) are reported as a single section. For the agricultural questionnaire, crops, livestock, and fisheries/aquaculture modules, respectively, have been collapsed.
+
 ```{r}
-#| label: section duration overall
+#| label: section duration, summarized
 
 reactable::reactable(
   data = duration_by_module,
+  defaultColDef = reactable::colDef(
+    maxWidth = 100,
+    format = reactable::colFormat(
+      digits = 2
+    )
+  ),
+  columns = list(
+    section = reactable::colDef(
+      width = 250
+    ),
+    n_obs = reactable::colDef(
+      format = reactable::colFormat(separators = TRUE)
+    )
+  ),
+  fullWidth = FALSE,
+  searchable = TRUE,
+  striped = TRUE,
+  theme = rf_theme
+)
+
+```
+
+#### Detailed
+
+For more detailed module-level reporting, the same information as the table above is reported by the sections as they appear in the Survey Solutions questionnaire.
+
+```{r}
+#| label: section duration, detailed
+
+reactable::reactable(
+  data = duration_by_module_detailed,
   defaultColDef = reactable::colDef(
     maxWidth = 100,
     format = reactable::colFormat(
