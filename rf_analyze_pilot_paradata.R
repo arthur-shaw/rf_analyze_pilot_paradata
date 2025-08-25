@@ -93,7 +93,7 @@ duration_by_module <- paradata_w_section |>
       section == "SECTION AG2.A CROP PRODUCTION" ~ 32,
       section == "SECTION AG2.B CROP LABOR - MAIN SEASON" ~ 33,
       section == "SECTION AG3.A CROP PRODUCTION - PERMANENT" ~ 34,
-      section == "SECTION AG3.B CROP LABOR - PERMANENT"                                             ~ 35,
+      section == "SECTION AG3.B CROP LABOR - PERMANENT" ~ 35,
       section == "SECTION AG5. CROP INPUTS" ~ 36,
       section == "SECTION AG6A. LIVESTOCK OWNERSHIP" ~ 37,
       section == "SECTION AG6B. LIVESTOCK COSTS" ~ 38,
