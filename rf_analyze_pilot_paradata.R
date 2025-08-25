@@ -1,4 +1,37 @@
 # ==============================================================================
+# define function for recurrent code
+# ==============================================================================
+
+#' Compute common statistics by grouping variable
+#'
+#' @param df Data frame
+#' @param by_var Bare variable name as in tidyverse
+#'
+#' @return Data frame
+#'
+#' @importFrom tidytable group_by summarise n ungroup
+compute_stats <- function(
+  df,
+  by_var
+) {
+
+  stats_by <- df |>
+    tidytable::group_by({{by_var}}) |>
+    tidytable::summarise(
+      med = median(x = elapsed_min, na.rm = TRUE),
+      mean = mean(x = elapsed_min, na.rm = TRUE),
+      sd = sd(x = elapsed_min, na.rm = TRUE),
+      min = min(elapsed_min, na.rm = TRUE),
+      max = max(elapsed_min, na.rm = TRUE),
+      n_obs = tidytable::n()
+    ) |>
+    tidytable::ungroup()
+
+  return(stats_by)
+
+}
+
+# ==============================================================================
 # interview length
 # ==============================================================================
 
@@ -20,15 +53,7 @@ duration_by_module <- paradata_w_section |>
   ) |>
   tidytable::ungroup() |>
   # compute statistics by section
-  tidytable::group_by(section) |>
-  tidytable::summarise(
-    med = median(x = elapsed_min, na.rm = TRUE),
-    sd = sd(x = elapsed_min, na.rm = TRUE),
-    min = min(elapsed_min, na.rm = TRUE),
-    max = max(elapsed_min, na.rm = TRUE),
-    n_obs = tidytable::n()
-  ) |>
-  tidytable::ungroup() |>
+  compute_stats(by_var = section) |>
 	# remove module prefilled questions
   dplyr::filter(section != "Cover") |>
 	# assign module numbers to facilitate sorting
@@ -140,15 +165,7 @@ duration_by_person_module <- paradata_w_section |>
   ) |>
   tidytable::ungroup() |>
   # compute statistics by section
-  tidytable::group_by(section) |>
-  tidytable::summarise(
-    med = median(x = elapsed_min, na.rm = TRUE),
-    sd = sd(x = elapsed_min, na.rm = TRUE),
-    min = min(elapsed_min, na.rm = TRUE),
-    max = max(elapsed_min, na.rm = TRUE),
-    n_obs = tidytable::n()
-  ) |>
-  tidytable::ungroup()
+  compute_stats(by_var = section)
 
 # ------------------------------------------------------------------------------
 # item-level
@@ -190,15 +207,7 @@ duration_by_item <- paradata_w_section |>
   ) |>
   tidytable::ungroup() |>
   # compute statistics by section
-  tidytable::group_by(section) |>
-  tidytable::summarise(
-    med = median(x = elapsed_min, na.rm = TRUE),
-    sd = sd(x = elapsed_min, na.rm = TRUE),
-    min = min(elapsed_min, na.rm = TRUE),
-    max = max(elapsed_min, na.rm = TRUE),
-    n_obs = tidytable::n()
-  ) |>
-  tidytable::ungroup()
+  compute_stats(by_var = section)
 
 # ------------------------------------------------------------------------------
 # question-level
@@ -209,15 +218,7 @@ duration_by_question <- paradata_w_durations |>
   tidytable::filter(!is.na(variable)) |>
 	tidytable::filter(event != "Completed") |>
   # compute statistics by question
-  tidytable::group_by(variable) |>
-  tidytable::summarise(
-    med = median(x = elapsed_min, na.rm = TRUE),
-    sd = sd(x = elapsed_min, na.rm = TRUE),
-    min = min(elapsed_min, na.rm = TRUE),
-    max = max(elapsed_min, na.rm = TRUE),
-    n_obs = tidytable::n()
-  ) |>
-  tidytable::ungroup() |>
+  compute_stats(by_var = variable) |>
   # join section attribute to facilitate filtering
   dplyr::left_join(
     variables_by_section,
@@ -256,14 +257,7 @@ duration_for_educ <- paradata_w_section |>
     elapsed_min = sum(elapsed_min, na.rm = TRUE)
   ) |>
 	# compute stats by sub-section
-  tidytable::group_by(sub_section) |>
-  tidytable::summarise(
-    med = median(x = elapsed_min, na.rm = TRUE),
-    sd = sd(x = elapsed_min, na.rm = TRUE),
-    min = min(elapsed_min, na.rm = TRUE),
-    max = max(elapsed_min, na.rm = TRUE),
-    n_obs = tidytable::n()
-  ) |>
+  compute_stats(by_var = sub_section) |>
   tidytable::ungroup() |>
 	dplyr::mutate(
     sub_section_order = dplyr::case_when(
@@ -300,15 +294,7 @@ duration_for_labor <- paradata_w_section |>
     elapsed_min = sum(elapsed_min, na.rm = TRUE)
   ) |>
 	# compute stats by sub-section
-  tidytable::group_by(sub_section) |>
-  tidytable::summarise(
-    med = median(x = elapsed_min, na.rm = TRUE),
-    sd = sd(x = elapsed_min, na.rm = TRUE),
-    min = min(elapsed_min, na.rm = TRUE),
-    max = max(elapsed_min, na.rm = TRUE),
-    n_obs = tidytable::n()
-  ) |>
-  tidytable::ungroup() |>
+  compute_stats(by_var = sub_section) |>
 	dplyr::mutate(
     sub_section_order = dplyr::case_when(
       sub_section == "Questions 1-29" ~ 1, 
@@ -346,14 +332,7 @@ duration_for_shocks <- paradata_w_section |>
     elapsed_min = sum(elapsed_min, na.rm = TRUE)
   ) |>
 	# compute stats by sub-section
-  tidytable::group_by(sub_section) |>
-  tidytable::summarise(
-    med = median(x = elapsed_min, na.rm = TRUE),
-    sd = sd(x = elapsed_min, na.rm = TRUE),
-    min = min(elapsed_min, na.rm = TRUE),
-    max = max(elapsed_min, na.rm = TRUE),
-    n_obs = tidytable::n()
-  ) |>
+  compute_stats(by_var = sub_section) |>
   tidytable::ungroup() |>
 	dplyr::mutate(
     sub_section_order = dplyr::case_when(
@@ -440,6 +419,7 @@ answer_changes_by_section <- paradata_w_section |>
 	# compute stats by section
   tidytable::group_by(section) |>
   tidytable::summarise(
+    mean = mean(x = n_answer_changes, na.rm = TRUE),
     med = median(x = n_answer_changes, na.rm = TRUE),
     sd = sd(x = n_answer_changes, na.rm = TRUE),
     min = min(n_answer_changes, na.rm = TRUE),
