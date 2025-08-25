@@ -80,7 +80,7 @@ reactable::reactable(
   columns = list(
     qnr = reactable::colDef(
       header = "Questionnaire",
-      width = 250
+      width = 200
     ),
     n_obs = reactable::colDef(
       format = reactable::colFormat(separators = TRUE)
@@ -111,7 +111,7 @@ For ease of reading, sections that are split into multile parts (e.g, A, B, etc.
 reactable::reactable(
   data = duration_by_module,
   defaultColDef = reactable::colDef(
-    maxWidth = 100,
+    maxWidth = 85,
     format = reactable::colFormat(
       digits = 2
     )
@@ -142,7 +142,7 @@ For more detailed module-level reporting, the same information as the table abov
 reactable::reactable(
   data = duration_by_module_detailed,
   defaultColDef = reactable::colDef(
-    maxWidth = 100,
+    maxWidth = 85,
     format = reactable::colFormat(
       digits = 2
     )
@@ -175,7 +175,7 @@ The column `n_obs` is the total number of people across all interviews.
 reactable::reactable(
   data = duration_by_person_module,
   defaultColDef = reactable::colDef(
-    maxWidth = 100,
+    maxWidth = 85,
     format = reactable::colFormat(
       digits = 2
     )
@@ -204,7 +204,7 @@ Since several modules are administered at the item level--whether that item be a
 reactable::reactable(
   data = duration_by_item,
   defaultColDef = reactable::colDef(
-    maxWidth = 100,
+    maxWidth = 85,
     format = reactable::colFormat(
       digits = 2
     )
@@ -284,13 +284,13 @@ Education is broken down into two sub-sections:
 reactable::reactable(
   data = duration_for_educ,
   defaultColDef = reactable::colDef(
-    maxWidth = 100,
+    maxWidth = 85,
     format = reactable::colFormat(
       digits = 2
     )
   ),
   columns = list(
-    section = reactable::colDef(
+    sub_section = reactable::colDef(
       width = 250
     ),
     n_obs = reactable::colDef(
@@ -318,13 +318,13 @@ The labor module is broken down into three sub-modules:
 reactable::reactable(
   data = duration_for_labor,
   defaultColDef = reactable::colDef(
-    maxWidth = 100,
+    maxWidth = 85,
     format = reactable::colFormat(
       digits = 2
     )
   ),
   columns = list(
-    section = reactable::colDef(
+    sub_section = reactable::colDef(
       width = 250
     ),
     n_obs = reactable::colDef(
@@ -358,7 +358,7 @@ reactable::reactable(
     )
   ),
   columns = list(
-    section = reactable::colDef(
+    sub_section = reactable::colDef(
       width = 250
     ),
     n_obs = reactable::colDef(
@@ -421,7 +421,7 @@ reactable::reactable(
 reactable::reactable(
   data = answer_changes_by_section,
   defaultColDef = reactable::colDef(
-    maxWidth = 100,
+    maxWidth = 85,
     format = reactable::colFormat(
       digits = 2
     )
