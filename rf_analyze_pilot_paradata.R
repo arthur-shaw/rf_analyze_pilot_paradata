@@ -238,10 +238,15 @@ duration_by_question <- paradata_w_durations |>
 duration_for_educ <- paradata_w_section |>
   # filter to education
   tidytable::filter(section == "SECTION 2: EDUCATION") |>
+  # remove timestamp questions since they don't rightly belong to either section
+  tidytable::filter(!variable %in% c("s2_StartTime", "s2_EndTime")) |>
   # split section into two parts
   tidytable::mutate(
     sub_section = tidytable::case_when(
-      grepl(x = variable, pattern = "^s2q([0-9]|s2q1[0-7])(_oth)?") ~ "Non-expendtiure",
+      grepl(
+        x = variable,
+        pattern = "^s2q([0-9]$|[0-9]_oth|1[0-7]|1[0-7]_oth)"
+      ) ~ "Non-expendtiure",
       .default = "Expenditure"
     )
   ) |>
