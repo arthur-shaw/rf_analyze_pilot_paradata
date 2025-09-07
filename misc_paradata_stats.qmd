@@ -1,6 +1,7 @@
 ---
 format: html
 embed-resources: true
+theme: [default, custom.scss]
 toc: true
 toc-depth: 3
 execute: 
@@ -67,6 +68,8 @@ Group 2 consists of:
 
 For the overall total duration, this is simply the sum of all duration for all modules administered. By construction, the modules differ for the supplementary ones.
 
+::: {#tbl-dur-by-questionnaire}
+
 ```{r}
 #| label: questionnaire duration
 reactable::reactable(
@@ -93,6 +96,9 @@ reactable::reactable(
 )
 ```
 
+Duration by questionnaire
+:::
+
 ## Module duration
 
 ### Overall
@@ -104,6 +110,8 @@ The column `n_obs` is the number of interviews for which the module was administ
 #### Summarized
 
 For ease of reading, sections that are split into multile parts (e.g, A, B, etc.) are reported as a single section. For the agricultural questionnaire, crops, livestock, and fisheries/aquaculture modules, respectively, have been collapsed.
+
+::: {#tbl-dur-by-section-summarized}
 
 ```{r}
 #| label: section duration, summarized
@@ -132,9 +140,15 @@ reactable::reactable(
 
 ```
 
+Duration by section, summarized
+
+:::
+
 #### Detailed
 
 For more detailed module-level reporting, the same information as the table above is reported by the sections as they appear in the Survey Solutions questionnaire.
+
+::: {#tbl-dur-by-section-detailed}
 
 ```{r}
 #| label: section duration, detailed
@@ -163,11 +177,17 @@ reactable::reactable(
 
 ```
 
+Duration by section, summarized
+
+:::
+
 ### Per person
 
 Since several modules are administered at member level, this table attempts reports a "unit" duration estimate--that is, how long the module takes to complete for one person. To do so for a given module, one first computes the total duration per row and then calculates statistics across all such rows.
 
 The column `n_obs` is the total number of people across all interviews.
+
+::: {#tbl-dur-by-person}
 
 ```{r}
 #| label: section duration by person
@@ -194,9 +214,15 @@ reactable::reactable(
 )
 ```
 
+Duration by person
+
+:::
+
 ### Per item
 
 Since several modules are administered at the item level--whether that item be an asset, a food item, or a household enterprise--this table reports the duration per item. This "unit" duration includes any household-level questions that may come at the beginning of the module (e.g., which food items are consumed).
+
+::: {#tbl-dur-by-item}
 
 ```{r}
 #| label: section duration by item
@@ -224,11 +250,17 @@ reactable::reactable(
 
 ```
 
+Duration per item
+
+:::
+
 ## Question duration
 
 Since not every question is answered in every interview, this table computes statistics for every question-level event across all pilot interviews.
 
 Hence, `n_obs` is the number of total question events in the paradata.
+
+::: {#tbl-dur-by-question}
 
 ```{r}
 #| label: question duration
@@ -265,6 +297,10 @@ crosstalk::bscols(
 
 ```
 
+Duration per question
+
+:::
+
 ### Focus on longer modules
 
 This section focuses on three modules that appear among the longest duration and/or were flagged by the firm as being long or frustrating for respondents.
@@ -277,6 +313,8 @@ Education is broken down into two sub-sections:
 
 1. **Non-expenditure.** These questions ask about reading/writing ability and educational attainment.
 2. **Expenditure.** These are non-negotiable questions about educational expenditures.
+
+::: {#tbl-dur-educ-detailed}
 
 ```{r}
 #| label: education
@@ -304,6 +342,10 @@ reactable::reactable(
 
 ```
 
+Duration by sub-section of education
+
+:::
+
 #### Labor
 
 The labor module is broken down into three sub-modules:
@@ -311,6 +353,8 @@ The labor module is broken down into three sub-modules:
 1. **Questions 1 through 29.** This covers employment, farm work, temporary absence, and job search.
 2. **Main job.** This captures information on the main job, the ISIC and ISCO codes, and assorted details on the employer and work benefits.
 3. **Everything else.** This covers the second job (if any), additional work, usage of gig apps, and food or cash for work. 
+
+::: {#tbl-dur-labor-detailed}
 
 ```{r}
 #| label: labor
@@ -339,12 +383,19 @@ reactable::reactable(
 
 ```
 
+Duration by sub-section of labor
+
+:::
+
+
 #### Shocks
 
 The shocks module is broken down into:
 
 - **Questions 1 and 2.** The questions that tradtionally constitute a shocks module.
 - **Everything else.** The more detailed questions about shocks included in this survey, some of which are potentially duplicative of questions asked in other modules (e.g., livestock, agriculture, etc).
+
+::: {#tbl-dur-shocks-detailed}
 
 ```{r}
 #| label: shocks
@@ -372,9 +423,15 @@ reactable::reactable(
 
 ```
 
+Duration by sub-section of shocks
+
+:::
+
 ## Pauses
 
 Because pauses are relatively infrequent events, the table below computes the number of answer changes as a simple tally over all pilot observations.
+
+::: {#tbl-dur-pauses}
 
 ```{r}
 #| label: pauses
@@ -411,9 +468,15 @@ reactable::reactable(
 
 ```
 
+Pauses
+
+:::
+
 ## Answer changes
 
 ### By section
+
+::: {#tbl-answer-changes-by-section}
 
 ```{r}
 #| label: answer changes by section
@@ -441,9 +504,15 @@ reactable::reactable(
 
 ```
 
+Answer changes by section
+
+:::
+
 ### By question
 
 Because answer changes are a relatively rare event, this table tries to identify questions with a relatively large number of answer changes by computing a simply tally of answer changes across all pilot observations.
+
+::: {#tbl-answer-changes-by-question}
 
 ```{r}
 #| label: answer changes by question
@@ -478,3 +547,7 @@ reactable::reactable(
 )
 
 ```
+
+Answer changes by question
+
+:::
