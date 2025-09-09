@@ -52,7 +52,14 @@ paradata_processed <- susopara::parse_paradata(dt = paradata_raw) |>
 # compute time between events
 paradata_w_durations <- susopara::calc_time_btw_active_events(
   dt = paradata_processed
-)
+) |>
+	# remove extreme durations
+  tidytable::filter(
+    # less than 99th percentile of duration
+    (elapsed_min < quantile(x = elapsed_min, probs = 0.99, na.rm = TRUE)) &
+    # non-negative
+    (elapsed_min > 0)
+  )
 
 # clean up environment, removing large and unused objects
 rm(paradata_raw)
