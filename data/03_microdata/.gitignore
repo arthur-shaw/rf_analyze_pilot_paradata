@@ -1,0 +1,5 @@
+# do not track microdata
+# raw data
+raw/*
+# combined data
+*.dta

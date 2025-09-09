@@ -18,8 +18,46 @@ variables_by_section <- qnr_df |>
 names_computed_variables <- susometa::get_variables(qnr_df = qnr_df) |>
 	dplyr::pull(varname)
 
+# questionnaire variable name
+qnr_var_name <- jqr::jq(
+  x = base::file(description = json_file_path),
+  ". | .VariableName"
+) |>
+  # convert from JSON object to character
+	jsonlite::fromJSON()
+
 # clean up environment
 rm(qnr_df)
+
+# ------------------------------------------------------------------------------
+# Microdata
+# ------------------------------------------------------------------------------
+
+# get path(s) to main data frame
+main_qnr_data_paths <- here::here("data", "03_microdata", "raw") |>
+  fs::dir_info(
+    type = "file",
+    recurse = TRUE
+  ) |>
+  dplyr::mutate(file_name = fs::path_file(path)) |>
+	dplyr::filter(
+    grepl(
+      x = file_name,
+      pattern = paste0(qnr_var_name, ".dta"),
+      fixed = TRUE
+    )
+  ) |>
+	dplyr::pull(path)
+
+# collect all data
+main_qnr_df <- main_qnr_data_paths |>
+  purrr::map(.f = ~ haven::read_dta(.x)) |>
+	purrr::list_rbind()
+
+# get IDs of completed interviews
+completed_interview_ids <- main_qnr_df |>
+	dplyr::filter(consent == 1) |>
+	dplyr::pull(interview__id)
 
 # ------------------------------------------------------------------------------
 # Paradata
@@ -53,6 +91,10 @@ paradata_processed <- susopara::parse_paradata(dt = paradata_raw) |>
 paradata_w_durations <- susopara::calc_time_btw_active_events(
   dt = paradata_processed
 ) |>
+  # select completed interviews
+  tidytable::filter(
+    interview__id %in% completed_interview_ids
+  ) |>
 	# remove extreme durations
   tidytable::filter(
     # less than 99th percentile of duration
